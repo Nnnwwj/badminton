@@ -245,7 +245,7 @@ git commit -m "feat: add demo profile API"
 - Consumes: `get_current_user()`、`GameSession`、`Participant`。
 - Produces: `SessionCreate`、`SessionResponse`；`GET /api/sessions`、`POST /api/sessions`。
 
-- [ ] **Step 1: 写活动 API 失败测试**
+- [x] **Step 1: 写活动 API 失败测试**
 
 测试必须覆盖：
 
@@ -271,23 +271,23 @@ def test_create_session_adds_creator_as_participant(client, seeded_db):
 
 另测 `end_at <= start_at` 返回 422，`capacity < 2` 返回 422。
 
-- [ ] **Step 2: 运行测试并确认失败**
+- [x] **Step 2: 运行测试并确认失败**
 
 Run: `cd backend && .venv/bin/pytest tests/test_sessions.py -q`
 
 Expected: FAIL，活动路由尚不存在。
 
-- [ ] **Step 3: 实现活动 schema、列表和发布**
+- [x] **Step 3: 实现活动 schema、列表和发布**
 
 发布时在同一事务内创建活动和创建者的 `joined` 参与记录。列表返回公开活动字段、参与者数量和剩余名额，不返回参与者昵称或私人资料。
 
-- [ ] **Step 4: 运行测试并确认通过**
+- [x] **Step 4: 运行测试并确认通过**
 
 Run: `cd backend && .venv/bin/pytest tests/test_sessions.py -q`
 
 Expected: 全部 PASS。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 git add backend/app/services/sessions.py backend/app/api/sessions.py backend/app/schemas.py backend/app/main.py backend/tests/test_sessions.py

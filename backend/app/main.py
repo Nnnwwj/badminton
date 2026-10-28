@@ -1,10 +1,12 @@
 from fastapi import FastAPI
 
 from app.api.profile import router as profile_router
+from app.api.sessions import router as sessions_router
 
 
 app = FastAPI(title="羽毛球约球助手")
 app.include_router(profile_router)
+app.include_router(sessions_router)
 
 
 @app.get("/api/health")

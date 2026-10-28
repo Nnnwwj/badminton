@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -6,6 +7,9 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 Level = Literal["newbie", "beginner", "skilled"]
 FormatPreference = Literal["singles", "doubles", "either"]
 Purpose = Literal["casual", "training", "either"]
+SessionFormat = Literal["singles", "doubles"]
+SessionPurpose = Literal["casual", "training"]
+SessionStatus = Literal["open", "full", "cancelled", "completed"]
 
 
 class AvailabilityResponse(BaseModel):
@@ -53,3 +57,43 @@ class ProfileUpdate(BaseModel):
     format_preference: FormatPreference | None = None
     purpose: Purpose | None = None
     availabilities: list[AvailabilityUpdate] | None = None
+
+
+class SessionCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    start_at: datetime
+    end_at: datetime
+    area: str = Field(min_length=1, max_length=100)
+    venue: str = Field(min_length=1, max_length=120)
+    format: SessionFormat
+    purpose: SessionPurpose
+    level_label: str = Field(min_length=1, max_length=50)
+    capacity: int = Field(ge=2)
+
+    @model_validator(mode="after")
+    def validate_session_time(self) -> "SessionCreate":
+        if self.start_at.utcoffset() is None or self.end_at.utcoffset() is None:
+            raise ValueError("session times must include a timezone")
+        self.start_at = self.start_at.astimezone(timezone.utc)
+        self.end_at = self.end_at.astimezone(timezone.utc)
+        if self.end_at <= self.start_at:
+            raise ValueError("end_at must be after start_at")
+        return self
+
+
+class SessionResponse(BaseModel):
+    id: str
+    creator_id: str
+    start_at: datetime
+    end_at: datetime
+    area: str
+    venue: str
+    format: SessionFormat
+    purpose: SessionPurpose
+    level_label: str
+    capacity: int
+    status: SessionStatus
+    created_at: datetime
+    participant_count: int
+    spots_remaining: int
