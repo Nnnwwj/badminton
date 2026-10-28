@@ -16,6 +16,20 @@ JoinConflictCode = Literal[
     "session_ended",
     "session_unavailable",
 ]
+FeedbackRating = Literal["suitable", "average", "unsuitable"]
+FeedbackReason = Literal[
+    "time",
+    "location",
+    "level",
+    "purpose",
+    "no_show",
+    "other",
+]
+FeedbackConflictCode = Literal[
+    "not_participant",
+    "session_not_ended",
+    "feedback_already_submitted",
+]
 
 
 class AvailabilityResponse(BaseModel):
@@ -103,3 +117,23 @@ class SessionResponse(BaseModel):
     created_at: datetime
     participant_count: int
     spots_remaining: int
+
+
+class FeedbackCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    rating: FeedbackRating
+    reason_category: FeedbackReason
+    comment: str | None = Field(default=None, max_length=1000)
+
+
+class FeedbackResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    session_id: str
+    user_id: str
+    rating: FeedbackRating
+    reason_category: FeedbackReason
+    comment: str | None
+    submitted_at: datetime

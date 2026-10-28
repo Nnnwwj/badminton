@@ -359,7 +359,7 @@ git commit -m "feat: make session joining transactional"
 - Consumes: `Participant`、`GameSession`、`Feedback`、`get_now()`。
 - Produces: `FeedbackCreate`、`FeedbackResponse`；`POST /api/sessions/{session_id}/feedback`。
 
-- [ ] **Step 1: 写反馈失败测试**
+- [x] **Step 1: 写反馈失败测试**
 
 测试覆盖：
 
@@ -375,23 +375,23 @@ def test_non_participant_cannot_submit_feedback(client, seeded_db):
 
 另测未结束活动返回 409、参与者成功提交、同一用户再次提交返回 409。
 
-- [ ] **Step 2: 运行测试并确认失败**
+- [x] **Step 2: 运行测试并确认失败**
 
 Run: `cd backend && .venv/bin/pytest tests/test_feedback.py -q`
 
 Expected: FAIL，反馈路由尚不存在。
 
-- [ ] **Step 3: 实现反馈授权与持久化**
+- [x] **Step 3: 实现反馈授权与持久化**
 
 原因类别只允许 `time`、`location`、`level`、`purpose`、`no_show`、`other`。只允许活动参与者、活动结束后、且未提交过反馈的用户写入。
 
-- [ ] **Step 4: 运行测试并确认通过**
+- [x] **Step 4: 运行测试并确认通过**
 
 Run: `cd backend && .venv/bin/pytest tests/test_feedback.py -q`
 
 Expected: 全部 PASS。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 git add backend/app/services/feedback.py backend/app/api/feedback.py backend/app/schemas.py backend/app/main.py backend/tests/test_feedback.py
