@@ -10,6 +10,12 @@ Purpose = Literal["casual", "training", "either"]
 SessionFormat = Literal["singles", "doubles"]
 SessionPurpose = Literal["casual", "training"]
 SessionStatus = Literal["open", "full", "cancelled", "completed"]
+JoinConflictCode = Literal[
+    "already_joined",
+    "session_full",
+    "session_ended",
+    "session_unavailable",
+]
 
 
 class AvailabilityResponse(BaseModel):

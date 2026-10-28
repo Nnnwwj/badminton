@@ -1,4 +1,5 @@
 from collections.abc import Generator
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Annotated
 
@@ -22,8 +23,13 @@ def get_db() -> Generator[Session, None, None]:
         yield db
 
 
+def get_now() -> datetime:
+    return datetime.now(timezone.utc)
+
+
 DatabaseSession = Annotated[Session, Depends(get_db)]
 DemoUserId = Annotated[str | None, Header(alias="X-Demo-User-Id")]
+CurrentTime = Annotated[datetime, Depends(get_now)]
 
 
 def get_current_user(

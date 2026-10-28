@@ -306,7 +306,7 @@ git commit -m "feat: add session listing and creation"
 - Consumes: 活动、参与者和可注入的 `get_now()`。
 - Produces: `JoinResult`；`join_session(db, session_id, user_id, now) -> JoinResult`；`POST /api/sessions/{session_id}/join`。
 
-- [ ] **Step 1: 写报名规则失败测试**
+- [x] **Step 1: 写报名规则失败测试**
 
 测试必须覆盖：
 
@@ -317,29 +317,29 @@ git commit -m "feat: add session listing and creation"
 - 不存在活动返回 404。
 - 两个不同用户并发争抢最后一个名额，只允许一个成功。
 
-- [ ] **Step 2: 运行测试并确认失败**
+- [x] **Step 2: 运行测试并确认失败**
 
 Run: `cd backend && .venv/bin/pytest tests/test_join_session.py -q`
 
 Expected: FAIL，报名接口尚不存在。
 
-- [ ] **Step 3: 实现单事务报名**
+- [x] **Step 3: 实现单事务报名**
 
 SQLite 写入使用 `BEGIN IMMEDIATE`。在事务内依次检查活动存在、状态可报名、未结束、用户未加入和剩余名额，然后插入参与记录。业务冲突返回 409，不通过“先查询、后另行写入”的两步流程。
 
-- [ ] **Step 4: 运行测试并确认通过**
+- [x] **Step 4: 运行测试并确认通过**
 
 Run: `cd backend && .venv/bin/pytest tests/test_join_session.py -q`
 
 Expected: 全部 PASS，并发测试恰好一个成功、一个冲突。
 
-- [ ] **Step 5: 运行完整后端测试**
+- [x] **Step 5: 运行完整后端测试**
 
 Run: `cd backend && .venv/bin/pytest -q`
 
 Expected: 全部 PASS。
 
-- [ ] **Step 6: 提交**
+- [x] **Step 6: 提交**
 
 ```bash
 git add backend/app/services/sessions.py backend/app/api/sessions.py backend/app/schemas.py backend/tests/test_join_session.py

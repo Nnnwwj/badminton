@@ -1,11 +1,14 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, HTTPException, status
 
-from app.dependencies import CurrentUser, DatabaseSession
+from app.dependencies import CurrentTime, CurrentUser, DatabaseSession
 from app.models import GameSession
 from app.schemas import SessionCreate, SessionResponse
 from app.services.sessions import (
+    JoinConflictError,
+    SessionNotFoundError,
     count_joined_participants,
     create_game_session,
+    join_session,
     list_sessions_with_participant_counts,
 )
 
@@ -61,3 +64,38 @@ def create_session(
     game_session = create_game_session(db, current_user.id, payload)
     participant_count = count_joined_participants(db, game_session.id)
     return _session_response(game_session, participant_count)
+
+
+@router.post("/{session_id}/join", response_model=SessionResponse)
+def join_existing_session(
+    session_id: str,
+    db: DatabaseSession,
+    current_user: CurrentUser,
+    now: CurrentTime,
+) -> SessionResponse:
+    try:
+        result = join_session(db, session_id, current_user.id, now)
+    except SessionNotFoundError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "code": "session_not_found",
+                "message": "Activity does not exist",
+            },
+        ) from None
+    except JoinConflictError as error:
+        messages = {
+            "already_joined": "User has already joined this activity",
+            "session_full": "Activity has no remaining spots",
+            "session_ended": "Activity has ended",
+            "session_unavailable": "Activity is not open for registration",
+        }
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={"code": error.code, "message": messages[error.code]},
+        ) from None
+
+    return _session_response(
+        result.game_session,
+        result.participant_count,
+    )

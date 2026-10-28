@@ -28,7 +28,7 @@ def seeded_db(engine):
 @pytest.fixture
 def client(engine):
     from app.database import create_session_factory
-    from app.dependencies import get_db
+    from app.dependencies import get_db, get_now
     from app.main import app
 
     TestingSession = create_session_factory(engine)
@@ -38,6 +38,8 @@ def client(engine):
             yield db
 
     app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[get_now] = lambda: SEEDED_NOW
     with TestClient(app) as test_client:
         yield test_client
     app.dependency_overrides.pop(get_db, None)
+    app.dependency_overrides.pop(get_now, None)
