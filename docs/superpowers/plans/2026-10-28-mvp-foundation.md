@@ -183,7 +183,7 @@ git commit -m "feat: add database models and demo seed"
 - Consumes: `get_db()`、`User`、`Availability`。
 - Produces: `get_current_user(x_demo_user_id: str | None, db) -> User`；`ProfileResponse`、`ProfileUpdate`；`GET /api/profile`、`PUT /api/profile`。
 
-- [ ] **Step 1: 写资料 API 失败测试**
+- [x] **Step 1: 写资料 API 失败测试**
 
 测试必须覆盖：
 
@@ -209,23 +209,23 @@ def test_put_profile_persists_new_area(client, seeded_db):
 
 另测缺失请求头返回 401。
 
-- [ ] **Step 2: 运行测试并确认失败**
+- [x] **Step 2: 运行测试并确认失败**
 
 Run: `cd backend && .venv/bin/pytest tests/test_profile.py -q`
 
 Expected: FAIL，路由或身份依赖尚不存在。
 
-- [ ] **Step 3: 实现身份依赖和资料读写**
+- [x] **Step 3: 实现身份依赖和资料读写**
 
 `PUT /api/profile` 只允许修改问答字段和当前用户自己的空闲时段，不允许修改 `id` 或 `is_admin`。更新区域、水平、项目偏好、目的或空闲时段后返回完整资料。
 
-- [ ] **Step 4: 运行测试并确认通过**
+- [x] **Step 4: 运行测试并确认通过**
 
 Run: `cd backend && .venv/bin/pytest tests/test_profile.py -q`
 
 Expected: 全部 PASS。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 git add backend/app/dependencies.py backend/app/schemas.py backend/app/api/profile.py backend/app/main.py backend/tests/test_profile.py
