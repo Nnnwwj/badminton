@@ -48,7 +48,7 @@
 - Consumes: Python 3.13 可执行文件。
 - Produces: `backend.app.main:app`；测试命令 `cd backend && .venv/bin/pytest -q`。
 
-- [ ] **Step 1: 初始化 Git 和 Python 虚拟环境**
+- [x] **Step 1: 初始化 Git 和 Python 虚拟环境**
 
 Run:
 
@@ -60,9 +60,9 @@ python3.13 -m venv backend/.venv
 
 Expected: Git 创建 `.git`，Python 报告版本 3.13。
 
-- [ ] **Step 2: 写入项目配置和失败测试**
+- [x] **Step 2: 写入项目配置和失败测试**
 
-`backend/pyproject.toml` 必须声明 FastAPI、Pydantic、SQLAlchemy、Uvicorn、pytest 和 httpx，并提供 `dev` optional dependencies。
+`backend/pyproject.toml` 必须声明 FastAPI、Pydantic、SQLAlchemy、Uvicorn、pytest 和 httpx2，并提供 `dev` optional dependencies。
 
 测试内容：
 
@@ -75,7 +75,7 @@ def test_health_returns_ok(client):
 
 `.gitignore` 至少包含 `.venv/`、`__pycache__/`、`.pytest_cache/`、`backend/data/*.db`、`.env`、`.playwright-cli/`、`output/playwright/` 和 `.DS_Store`。
 
-- [ ] **Step 3: 安装项目依赖**
+- [x] **Step 3: 安装项目依赖**
 
 Run:
 
@@ -86,23 +86,23 @@ backend/.venv/bin/python -m pip install --index-url https://mirrors.aliyun.com/p
 
 Expected: 安装成功，`backend/.venv/bin/pytest --version` 可运行。
 
-- [ ] **Step 4: 运行测试并确认失败**
+- [x] **Step 4: 运行测试并确认失败**
 
 Run: `cd backend && .venv/bin/pytest tests/test_health.py -q`
 
 Expected: FAIL，原因是 `backend.app.main` 或 `/api/health` 尚不存在。
 
-- [ ] **Step 5: 实现最小 FastAPI 应用**
+- [x] **Step 5: 实现最小 FastAPI 应用**
 
 在 `backend/app/main.py` 中定义 `app = FastAPI(title="羽毛球约球助手")` 和 `GET /api/health`，返回 `{"status": "ok"}`。
 
-- [ ] **Step 6: 运行测试并确认通过**
+- [x] **Step 6: 运行测试并确认通过**
 
 Run: `cd backend && .venv/bin/pytest -q`
 
 Expected: 全部测试 PASS。
 
-- [ ] **Step 7: 提交**
+- [x] **Step 7: 提交**
 
 ```bash
 git add .gitignore .env.example backend
@@ -121,7 +121,7 @@ git commit -m "chore: bootstrap FastAPI test harness"
 - Consumes: Task 1 的 FastAPI 应用和测试环境。
 - Produces: `Base`、`User`、`Availability`、`GameSession`、`Participant`、`Feedback`、`RecommendationRecord`、`AgentConfig`；`seed_database(engine) -> None`。
 
-- [ ] **Step 1: 写种子数据失败测试**
+- [x] **Step 1: 写种子数据失败测试**
 
 测试内容：
 
@@ -135,13 +135,13 @@ def test_seed_creates_six_users_and_three_sessions(engine):
 
 测试还应断言至少一场活动在未来、一场已结束，并存在一名管理员。
 
-- [ ] **Step 2: 运行测试并确认失败**
+- [x] **Step 2: 运行测试并确认失败**
 
 Run: `cd backend && .venv/bin/pytest tests/test_seed.py -q`
 
 Expected: FAIL，模型和 `seed_database` 尚不存在。
 
-- [ ] **Step 3: 实现最小表结构**
+- [x] **Step 3: 实现最小表结构**
 
 必须包含：
 
@@ -153,17 +153,17 @@ Expected: FAIL，模型和 `seed_database` 尚不存在。
 - `recommendations`：需求文本、候选快照 JSON、模型输出 JSON、模型名称、提示词版本、时间。
 - `agent_config`：版本、修改时间、修改原因。
 
-- [ ] **Step 4: 实现六用户、三活动种子**
+- [x] **Step 4: 实现六用户、三活动种子**
 
 种子必须可重复执行且不产生重复行；三个活动分别覆盖未来可报名、已满员、已结束。固定 UUID 只用于演示数据。
 
-- [ ] **Step 5: 运行测试并确认通过**
+- [x] **Step 5: 运行测试并确认通过**
 
 Run: `cd backend && .venv/bin/pytest tests/test_seed.py -q`
 
 Expected: PASS；连续执行两次后计数仍为 6 和 3。
 
-- [ ] **Step 6: 提交**
+- [x] **Step 6: 提交**
 
 ```bash
 git add backend/app/database.py backend/app/models.py backend/app/seed.py backend/tests/test_seed.py
