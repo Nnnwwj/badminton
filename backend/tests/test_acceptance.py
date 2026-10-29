@@ -1,4 +1,10 @@
+import json
+
+from app.config import Settings
+from app.dependencies import get_deepseek_client
+from app.main import app
 from app.seed import DEMO_SESSION_IDS, DEMO_USER_IDS
+from app.services.deepseek import ChatCompletion
 
 
 USER_A_ID = DEMO_USER_IDS[0]
@@ -12,6 +18,7 @@ def test_openapi_contains_the_stable_backend_contract(client):
     assert response.status_code == 200
     assert set(response.json()["paths"]) == {
         "/api/admin/feedback-summary",
+        "/api/agent/chat",
         "/api/health",
         "/api/profile",
         "/api/sessions",
@@ -87,3 +94,42 @@ def test_backend_mvp_flow(client, seeded_db):
         },
     }
     assert "验收流程反馈" not in summary.text
+
+    class AcceptanceAgentClient:
+        settings = Settings(
+            api_key="acceptance-secret",
+            base_url="https://example.test",
+            model="acceptance-model",
+            prompt_version="acceptance-v1",
+            timeout_seconds=1,
+        )
+
+        def complete(self, *, messages, tools, response_format=None):
+            return ChatCompletion(
+                content=json.dumps(
+                    {
+                        "status": "no_match",
+                        "message": "当前没有符合条件的新活动。",
+                        "questions": [],
+                        "recommendations": [],
+                        "suggested_action": None,
+                    },
+                    ensure_ascii=False,
+                ),
+                tool_calls=(),
+                finish_reason="stop",
+            )
+
+    app.dependency_overrides[get_deepseek_client] = AcceptanceAgentClient
+    try:
+        agent = client.post(
+            "/api/agent/chat",
+            headers=headers_a,
+            json={"message": "帮我找明天的活动"},
+        )
+    finally:
+        app.dependency_overrides.pop(get_deepseek_client, None)
+
+    assert agent.status_code == 200
+    assert agent.json()["status"] == "no_match"
+    assert "acceptance-secret" not in agent.text

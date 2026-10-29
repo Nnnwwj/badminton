@@ -6,8 +6,10 @@ from typing import Annotated
 from fastapi import Depends, Header, HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.config import Settings
 from app.database import create_db_engine, create_session_factory
 from app.models import User
+from app.services.deepseek import DeepSeekClient
 
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
@@ -52,3 +54,23 @@ def get_current_user(
 
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
+
+
+def get_deepseek_client() -> DeepSeekClient:
+    try:
+        settings = Settings.from_env()
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail={
+                "code": "agent_not_configured",
+                "message": "DeepSeek is not configured",
+            },
+        ) from None
+    return DeepSeekClient(settings)
+
+
+DeepSeekClientDependency = Annotated[
+    DeepSeekClient,
+    Depends(get_deepseek_client),
+]

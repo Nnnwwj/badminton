@@ -46,6 +46,27 @@ X-Demo-User-Id: 00000000-0000-4000-8000-000000000001
 The fixed demo identities and activities are defined in `app/seed.py`. The first
 demo user is the administrator.
 
+## DeepSeek Agent
+
+Create `backend/.env` from `.env.example` and set the backend-only values:
+
+```dotenv
+DEEPSEEK_API_KEY=your-secret-key
+DEEPSEEK_BASE_URL=https://api.deepseek.com
+DEEPSEEK_MODEL=deepseek-flash
+DEEPSEEK_PROMPT_VERSION=v1
+DEEPSEEK_TIMEOUT_SECONDS=30
+```
+
+The local project is configured for `deepseek-flash`. The model name comes
+from `DEEPSEEK_MODEL`; it is not hard-coded in application logic.
+
+`POST /api/agent/chat` exposes the read-only recommendation agent. The model may
+query available activities and the current user's feedback summary. Final JSON
+is validated by the backend, and every recommended activity ID must come from a
+real tool result in the same request. Recommendation audits are stored in the
+`recommendations` table without the API key.
+
 ## Test
 
 ```bash
@@ -53,9 +74,8 @@ cd backend
 .venv/bin/pytest -q
 ```
 
-Tests use isolated temporary SQLite databases and do not require network access
-or `DEEPSEEK_API_KEY`.
+Tests use isolated temporary SQLite databases and mocked model responses. They do
+not require network access or `DEEPSEEK_API_KEY`.
 
-The current backend MVP includes profile, activity, joining, feedback and admin
-feedback summary endpoints. The design document API `/api/agent/chat` belongs to
-the later DeepSeek tool-calling phase and is not implemented here.
+The backend includes profile, activity, joining, feedback, admin summary and
+DeepSeek agent chat endpoints.

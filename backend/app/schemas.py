@@ -244,3 +244,9 @@ class AgentReply(BaseModel):
                     f"{self.status} replies may only suggest creating"
                 )
         return self
+
+
+class AgentChatRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    message: str = Field(min_length=1, max_length=2000)

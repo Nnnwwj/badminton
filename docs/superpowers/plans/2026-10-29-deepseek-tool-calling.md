@@ -13,7 +13,7 @@
 ## Global Constraints
 
 - `DEEPSEEK_API_KEY` stays only in `backend/.env` or an injected environment variable. Never log, return, persist or commit it.
-- Use `DEEPSEEK_MODEL` from the environment. The local configured model is `deepseek-4.1-flash`; code must not hard-code that name.
+- Use `DEEPSEEK_MODEL` from the environment. The local configured model is `deepseek-flash`; code must not hard-code that name.
 - Use `DEEPSEEK_BASE_URL` from the environment, defaulting to `https://api.deepseek.com`.
 - Use `DEEPSEEK_PROMPT_VERSION` from the environment, defaulting to `v1`.
 - The model receives only the current user's public profile, that user's feedback summary and public activity candidates.
@@ -187,10 +187,8 @@ git push origin main
 - Create: `backend/app/api/agent.py`
 - Modify: `backend/app/main.py`
 - Modify: `backend/app/dependencies.py`
-- Modify: `backend/tests/conftest.py`
 - Create: `backend/tests/test_agent_api.py`
 - Modify: `backend/tests/test_acceptance.py`
-- Modify: `backend/tests/test_candidates.py`
 - Modify: `backend/README.md`
 - Modify: `docs/api-contract.md`
 
@@ -198,7 +196,7 @@ git push origin main
 - Consumes: `run_agent`, current user, current UTC time and configured `DeepSeekClient`.
 - Produces: `AgentChatRequest`, `AgentReply`; `POST /api/agent/chat`; a dependency override seam for tests.
 
-- [ ] **Step 1: Write failing HTTP and acceptance tests**
+- [x] **Step 1: Write failing HTTP and acceptance tests**
 
 Tests must cover:
 
@@ -208,27 +206,27 @@ Tests must cover:
 - Malformed model output returns `invalid_model_output`.
 - The end-to-end backend flow includes agent chat and verifies no secret appears in responses.
 
-- [ ] **Step 2: Run the tests and confirm failure**
+- [x] **Step 2: Run the tests and confirm failure**
 
 Run: `cd backend && .venv/bin/pytest tests/test_agent_api.py tests/test_acceptance.py -q`
 
 Expected: FAIL because `/api/agent/chat` does not exist.
 
-- [ ] **Step 3: Implement the endpoint and update the contract**
+- [x] **Step 3: Implement the endpoint and update the contract**
 
 Add `/api/agent/chat` to the documented six design paths. Update the startup instructions to explain that a configured `DEEPSEEK_API_KEY` and `DEEPSEEK_MODEL` enable the endpoint. Keep the public error structure stable and never include raw provider errors containing credentials.
 
-- [ ] **Step 4: Run full automated verification**
+- [x] **Step 4: Run full automated verification**
 
 Run: `cd backend && .venv/bin/pytest -q`
 
 Expected: all pass without network access or a real key.
 
-- [ ] **Step 5: Run a guarded live smoke check**
+- [x] **Step 5: Run a guarded live smoke check**
 
 Load `backend/.env`, request a short Chinese recommendation from the running API, print only status, model name and response structure, and confirm the configured model responds with valid JSON or a documented provider error. Never print the key or full authorization header.
 
-- [ ] **Step 6: Commit and push**
+- [x] **Step 6: Commit and push**
 
 ```bash
 git add backend/app/api/agent.py backend/app/main.py backend/app/dependencies.py backend/tests/conftest.py backend/tests/test_agent_api.py backend/tests/test_acceptance.py backend/tests/test_candidates.py backend/README.md docs/api-contract.md

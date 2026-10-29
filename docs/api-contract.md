@@ -1,7 +1,8 @@
 # Backend MVP API Contract
 
-This contract describes the stable backend surface delivered by Tasks 1-9. The
-six paths below are present in the generated OpenAPI document.
+This contract describes the stable backend surface delivered by the MVP and
+DeepSeek tool-calling phases. The six product-design paths plus the health check
+are present in the generated OpenAPI document.
 
 ## Common Rules
 
@@ -31,6 +32,60 @@ Returns service health.
 ```
 
 Status: `200`.
+
+### `POST /api/agent/chat`
+
+Runs the DeepSeek recommendation agent. The backend supplies the current UTC
+time, Asia/Shanghai timezone, the current user's public profile and validated
+read-only tools. The model can query available activities and the current user's
+feedback category summary. It cannot perform writes.
+
+Request:
+
+```json
+{
+  "message": "周三晚上想在学校体育馆打双打，偏休闲"
+}
+```
+
+Success response:
+
+```json
+{
+  "status": "recommend",
+  "message": "找到一场时间和区域都比较合适的活动。",
+  "questions": [],
+  "recommendations": [
+    {
+      "candidate_id": "10000000-0000-4000-8000-000000000001",
+      "reason": "活动在学校体育馆，形式为双打，目的是休闲交流。",
+      "tradeoff": "双方具体水平还需要进一步确认。"
+    }
+  ],
+  "suggested_action": "join_session"
+}
+```
+
+Status meanings:
+
+- `ask`: one or two follow-up questions are required; recommendations are empty.
+- `recommend`: one to three verified candidate IDs are returned.
+- `no_match`: no currently available activity matched.
+- `error`: the agent could not complete the recommendation safely.
+
+Every `candidate_id` must have been returned by a real `search_candidates` tool
+call during the same request and must still be open and available when the reply
+is validated. The response never includes feedback comments, phone numbers or
+other users' private data. `suggested_action` is advisory only and does not
+perform a write.
+
+Statuses:
+
+- `200`: validated agent reply
+- `401`: missing or invalid demo identity
+- `422`: empty, overlong or unknown request fields
+- `502`: `invalid_model_output` or `agent_loop_limit`
+- `503`: `agent_unavailable` or `agent_not_configured`
 
 ### `GET /api/profile`
 
@@ -195,12 +250,9 @@ Statuses:
 - `401`: missing or invalid demo identity
 - `403`: `admin_required`
 
-## Deferred Design API
+## Internal Services
 
-`POST /api/agent/chat` is listed in the product design but is intentionally not
-part of this backend foundation. It will be introduced in the later DeepSeek
-tool-calling phase together with prompt, tool-call validation, model-output
-verification, timeout handling and error recovery.
-
-The objective candidate search in `app.services.candidates` is currently an
-internal service consumed by the later agent phase, not a public HTTP path.
+The objective candidate search in `app.services.candidates` is an internal
+service used by the agent's `search_candidates` tool. It is not a public HTTP
+path. The agent's only tools are `search_candidates` and
+`get_my_feedback_summary`; both are read-only.
