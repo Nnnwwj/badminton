@@ -501,7 +501,7 @@ git commit -m "feat: add objective candidate query service"
 - Consumes: Tasks 1–8 的全部公开 API。
 - Produces: 可执行的本地启动说明、OpenAPI 路径清单和完整后端验收测试。
 
-- [ ] **Step 1: 写端到端失败测试**
+- [x] **Step 1: 写端到端失败测试**
 
 单个测试完成以下流程：
 
@@ -512,13 +512,15 @@ git commit -m "feat: add objective candidate query service"
 5. 已结束活动的参与者 B 提交反馈。
 6. 管理员读取原因统计并看到对应计数。
 
-- [ ] **Step 2: 运行测试并确认失败**
+- [x] **Step 2: 运行测试并确认失败**
 
 Run: `cd backend && .venv/bin/pytest tests/test_acceptance.py -q`
 
 Expected: FAIL，直到整个流程和测试数据一致。
 
-- [ ] **Step 3: 修正接口衔接并补齐文档**
+实际结果：Tasks 1–8 已经完成，验收测试首次运行即通过；本轮未发现需要修正的接口衔接。
+
+- [x] **Step 3: 修正接口衔接并补齐文档**
 
 `docs/api-contract.md` 必须列出设计文档中的六个公开路径、请求头、成功结构、主要错误码和 UTC 时间格式。`backend/README.md` 给出：
 
@@ -529,7 +531,7 @@ cd backend
 
 Expected: 浏览器可访问 `http://127.0.0.1:8000/docs`。
 
-- [ ] **Step 4: 运行完整验证**
+- [x] **Step 4: 运行完整验证**
 
 Run:
 
@@ -541,7 +543,7 @@ cd backend
 
 Expected: pytest 全部 PASS；Uvicorn 在 8000 端口启动且 `/api/health` 返回 200。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 git add backend/tests/test_acceptance.py backend/README.md docs/api-contract.md
