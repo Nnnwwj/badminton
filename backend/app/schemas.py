@@ -119,6 +119,52 @@ class SessionResponse(BaseModel):
     spots_remaining: int
 
 
+class CandidateQuery(BaseModel):
+    """Objective filters; start/end define an overlapping query window."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    start_at: datetime | None = None
+    end_at: datetime | None = None
+    area: str | None = Field(default=None, min_length=1, max_length=100)
+    format: SessionFormat | None = None
+    purpose: SessionPurpose | None = None
+
+    @model_validator(mode="after")
+    def validate_query_time(self) -> "CandidateQuery":
+        if self.start_at is not None:
+            if self.start_at.utcoffset() is None:
+                raise ValueError("start_at must include a timezone")
+            self.start_at = self.start_at.astimezone(timezone.utc)
+        if self.end_at is not None:
+            if self.end_at.utcoffset() is None:
+                raise ValueError("end_at must include a timezone")
+            self.end_at = self.end_at.astimezone(timezone.utc)
+        if (
+            self.start_at is not None
+            and self.end_at is not None
+            and self.end_at <= self.start_at
+        ):
+            raise ValueError("end_at must be after start_at")
+        return self
+
+
+class CandidateSummary(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    start_at: datetime
+    end_at: datetime
+    area: str
+    venue: str
+    format: SessionFormat
+    purpose: SessionPurpose
+    level_label: str
+    capacity: int = Field(ge=2)
+    participant_count: int = Field(ge=0)
+    spots_remaining: int = Field(ge=0)
+
+
 class FeedbackCreate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 

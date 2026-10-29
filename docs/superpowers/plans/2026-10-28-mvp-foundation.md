@@ -453,7 +453,7 @@ git commit -m "feat: summarize feedback for admins"
 - Consumes: 当前 UTC 时间、活动和参与记录。
 - Produces: `CandidateQuery`；`search_candidates(db, query: CandidateQuery, now: datetime) -> list[CandidateSummary]`。
 
-- [ ] **Step 1: 写候选过滤失败测试**
+- [x] **Step 1: 写候选过滤失败测试**
 
 测试必须覆盖：
 
@@ -466,23 +466,23 @@ git commit -m "feat: summarize feedback for admins"
 
 注意事项：这里的时间升序只是稳定候选集顺序，不是推荐排序，也不得暴露给后续模型作为固定权重。
 
-- [ ] **Step 2: 运行测试并确认失败**
+- [x] **Step 2: 运行测试并确认失败**
 
 Run: `cd backend && .venv/bin/pytest tests/test_candidates.py -q`
 
 Expected: FAIL，`search_candidates` 尚不存在。
 
-- [ ] **Step 3: 实现数据库过滤**
+- [x] **Step 3: 实现数据库过滤**
 
 查询只应用用户或模型明确提供的客观条件，并无条件排除失效活动。不得在本服务内计算匹配分数、选择“最佳”候选或生成推荐理由。
 
-- [ ] **Step 4: 运行测试并确认通过**
+- [x] **Step 4: 运行测试并确认通过**
 
 Run: `cd backend && .venv/bin/pytest tests/test_candidates.py -q`
 
 Expected: 全部 PASS。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 git add backend/app/services/candidates.py backend/app/schemas.py backend/tests/test_candidates.py
