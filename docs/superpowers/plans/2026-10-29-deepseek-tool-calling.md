@@ -145,7 +145,7 @@ git push origin main
 - Consumes: `DeepSeekClient`, `execute_tool`, `parse_agent_reply`, `RecommendationRecord`.
 - Produces: `run_agent(db, client, user, message, now) -> AgentReply`; persisted audit record containing request text, candidate snapshot, validated model output, model name and prompt version.
 
-- [ ] **Step 1: Write failing orchestration tests**
+- [x] **Step 1: Write failing orchestration tests**
 
 Tests must cover:
 
@@ -157,23 +157,23 @@ Tests must cover:
 - Empty content, malformed JSON, unavailable API and invalid candidate ID become safe agent errors.
 - Successful and error runs both persist an audit record without the API key.
 
-- [ ] **Step 2: Run the tests and confirm failure**
+- [x] **Step 2: Run the tests and confirm failure**
 
 Run: `cd backend && .venv/bin/pytest tests/test_agent.py -q`
 
 Expected: FAIL because orchestration does not exist.
 
-- [ ] **Step 3: Implement the bounded tool-call loop**
+- [x] **Step 3: Implement the bounded tool-call loop**
 
 Build system/running-context messages, append tool results in OpenAI-compatible format, validate final output, and commit one audit record. Use dependency injection for the DeepSeek client and deterministic tests with a fake client or mocked HTTP transport.
 
-- [ ] **Step 4: Run focused tests and then the full suite**
+- [x] **Step 4: Run focused tests and then the full suite**
 
 Run: `cd backend && .venv/bin/pytest tests/test_agent.py -q && .venv/bin/pytest -q`
 
 Expected: all pass.
 
-- [ ] **Step 5: Commit and push**
+- [x] **Step 5: Commit and push**
 
 ```bash
 git add backend/app/services/agent.py backend/app/models.py backend/app/schemas.py backend/tests/test_agent.py
