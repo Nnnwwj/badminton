@@ -137,3 +137,19 @@ class FeedbackResponse(BaseModel):
     reason_category: FeedbackReason
     comment: str | None
     submitted_at: datetime
+
+
+class FeedbackReasonCounts(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    time: int = Field(ge=0)
+    location: int = Field(ge=0)
+    level: int = Field(ge=0)
+    purpose: int = Field(ge=0)
+    no_show: int = Field(ge=0)
+    other: int = Field(ge=0)
+
+
+class FeedbackSummaryResponse(BaseModel):
+    total: int = Field(ge=0)
+    reason_counts: FeedbackReasonCounts

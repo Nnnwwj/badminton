@@ -1,11 +1,26 @@
 from datetime import datetime, timezone
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.models import Feedback, GameSession, Participant
-from app.schemas import FeedbackConflictCode, FeedbackCreate
+from app.schemas import (
+    FeedbackConflictCode,
+    FeedbackCreate,
+    FeedbackReasonCounts,
+    FeedbackSummaryResponse,
+)
+
+
+FEEDBACK_REASONS = (
+    "time",
+    "location",
+    "level",
+    "purpose",
+    "no_show",
+    "other",
+)
 
 
 class FeedbackSessionNotFoundError(Exception):
@@ -80,3 +95,19 @@ def submit_feedback(
         raise
 
     return feedback
+
+
+def summarize_feedback(db: Session) -> FeedbackSummaryResponse:
+    reason_counts = {reason: 0 for reason in FEEDBACK_REASONS}
+    statement = select(
+        Feedback.reason_category,
+        func.count(Feedback.id),
+    ).group_by(Feedback.reason_category)
+
+    for reason, count in db.execute(statement):
+        reason_counts[reason] = count
+
+    return FeedbackSummaryResponse(
+        total=sum(reason_counts.values()),
+        reason_counts=FeedbackReasonCounts(**reason_counts),
+    )

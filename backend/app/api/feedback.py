@@ -1,15 +1,21 @@
 from fastapi import APIRouter, HTTPException, status
 
 from app.dependencies import CurrentTime, CurrentUser, DatabaseSession
-from app.schemas import FeedbackCreate, FeedbackResponse
+from app.schemas import (
+    FeedbackCreate,
+    FeedbackResponse,
+    FeedbackSummaryResponse,
+)
 from app.services.feedback import (
     FeedbackConflictError,
     FeedbackSessionNotFoundError,
     submit_feedback,
+    summarize_feedback,
 )
 
 
 router = APIRouter(prefix="/api/sessions", tags=["feedback"])
+admin_router = APIRouter(prefix="/api/admin", tags=["admin"])
 
 
 @router.post(
@@ -57,3 +63,23 @@ def submit_session_feedback(
         ) from None
 
     return FeedbackResponse.model_validate(feedback)
+
+
+@admin_router.get(
+    "/feedback-summary",
+    response_model=FeedbackSummaryResponse,
+)
+def get_feedback_summary(
+    db: DatabaseSession,
+    current_user: CurrentUser,
+) -> FeedbackSummaryResponse:
+    if not current_user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "code": "admin_required",
+                "message": "Administrator access is required",
+            },
+        )
+
+    return summarize_feedback(db)

@@ -410,7 +410,7 @@ git commit -m "feat: add authorized feedback submission"
 - Consumes: `Feedback`、`User.is_admin`。
 - Produces: `FeedbackSummaryResponse`；`GET /api/admin/feedback-summary`。
 
-- [ ] **Step 1: 写统计失败测试**
+- [x] **Step 1: 写统计失败测试**
 
 测试必须断言：
 
@@ -419,23 +419,23 @@ git commit -m "feat: add authorized feedback submission"
 - 每种原因类别返回准确计数，零次类别仍返回 0。
 - 响应不包含反馈补充文字或用户昵称。
 
-- [ ] **Step 2: 运行测试并确认失败**
+- [x] **Step 2: 运行测试并确认失败**
 
 Run: `cd backend && .venv/bin/pytest tests/test_feedback_summary.py -q`
 
 Expected: FAIL，统计接口尚不存在。
 
-- [ ] **Step 3: 实现管理员统计**
+- [x] **Step 3: 实现管理员统计**
 
 使用数据库聚合查询，不把全部反馈记录加载到 Python 后计数。固定返回六类原因。
 
-- [ ] **Step 4: 运行测试并确认通过**
+- [x] **Step 4: 运行测试并确认通过**
 
 Run: `cd backend && .venv/bin/pytest tests/test_feedback_summary.py -q`
 
 Expected: 全部 PASS。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 git add backend/app/services/feedback.py backend/app/api/feedback.py backend/app/schemas.py backend/tests/test_feedback_summary.py
