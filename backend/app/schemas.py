@@ -199,3 +199,48 @@ class FeedbackReasonCounts(BaseModel):
 class FeedbackSummaryResponse(BaseModel):
     total: int = Field(ge=0)
     reason_counts: FeedbackReasonCounts
+
+
+AgentStatus = Literal["ask", "recommend", "no_match", "error"]
+AgentSuggestedAction = Literal["join_session", "create_session"]
+
+
+class AgentRecommendation(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    candidate_id: str
+    reason: str = Field(min_length=1, max_length=1000)
+    tradeoff: str = Field(min_length=1, max_length=1000)
+
+
+class AgentReply(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    status: AgentStatus
+    message: str = Field(min_length=1, max_length=2000)
+    questions: list[str] = Field(default_factory=list, max_length=2)
+    recommendations: list[AgentRecommendation] = Field(
+        default_factory=list, max_length=3
+    )
+    suggested_action: AgentSuggestedAction | None = None
+
+    @model_validator(mode="after")
+    def validate_status_shape(self) -> "AgentReply":
+        if self.status == "ask":
+            if not self.questions or self.recommendations:
+                raise ValueError("ask replies require one or two questions")
+            if self.suggested_action is not None:
+                raise ValueError("ask replies cannot suggest an action")
+        elif self.status == "recommend":
+            if self.questions or not self.recommendations:
+                raise ValueError("recommend replies require recommendations")
+            if self.suggested_action not in {None, "join_session"}:
+                raise ValueError("recommend replies may only suggest joining")
+        else:
+            if self.questions or self.recommendations:
+                raise ValueError(f"{self.status} replies cannot include follow-up")
+            if self.suggested_action not in {None, "create_session"}:
+                raise ValueError(
+                    f"{self.status} replies may only suggest creating"
+                )
+        return self

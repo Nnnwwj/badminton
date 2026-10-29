@@ -99,7 +99,7 @@ git push origin main
 - Consumes: raw final assistant text and the current request's `dict[str, CandidateSummary]`.
 - Produces: `AgentReply`; `parse_agent_reply(content: str, candidates: dict[str, CandidateSummary]) -> AgentReply`.
 
-- [ ] **Step 1: Write failing structured-output tests**
+- [x] **Step 1: Write failing structured-output tests**
 
 Tests must cover:
 
@@ -109,23 +109,23 @@ Tests must cover:
 - Unknown, stale or duplicated candidate IDs are rejected.
 - Candidate reason and tradeoff text may be returned but never private fields.
 
-- [ ] **Step 2: Run the tests and confirm failure**
+- [x] **Step 2: Run the tests and confirm failure**
 
 Run: `cd backend && .venv/bin/pytest tests/test_agent_output.py -q`
 
 Expected: FAIL because the output validator does not exist.
 
-- [ ] **Step 3: Implement strict JSON parsing and candidate verification**
+- [x] **Step 3: Implement strict JSON parsing and candidate verification**
 
 Strip a single optional Markdown JSON fence, parse JSON, validate with Pydantic, then compare every recommendation ID against the candidate map collected during this run. Do not repair or invent missing fields.
 
-- [ ] **Step 4: Run focused tests and then the full suite**
+- [x] **Step 4: Run focused tests and then the full suite**
 
 Run: `cd backend && .venv/bin/pytest tests/test_agent_output.py -q && .venv/bin/pytest -q`
 
 Expected: all pass.
 
-- [ ] **Step 5: Commit and push**
+- [x] **Step 5: Commit and push**
 
 ```bash
 git add backend/app/services/agent_output.py backend/app/schemas.py backend/tests/test_agent_output.py
